@@ -16,7 +16,7 @@
   (source-location-adjusted-file-position function)
   (this-source-location macro))
 
-(defun/autoloaded make-source-location (&key file file-position
+(defun/auto make-source-location (&key file file-position
                                              buffer buffer-position snippet)
   "Make a Swank source location. The ultimate reference is
   `slime-goto-source-location` in `slime.el`. When SNIPPET is
@@ -34,12 +34,12 @@
                             buffer-position))
         (list :snippet snippet)))
 
-(defun/autoloaded source-location-p (object)
+(defun/auto source-location-p (object)
   "See if OBJECT is a source location object."
   (and (listp object)
        (eq (first object) :location)))
 
-(defun/autoloaded source-location-file (location)
+(defun/auto source-location-file (location)
   "Return the name of the file of the [defining form][clhs].
   This may be NIL, for example, if LOCATION is of a [defining
   form][clhs] that was entered at the REPL, or compiled in the
@@ -50,7 +50,7 @@
     (or (second file-entry)
         (third buffer-and-file-entry))))
 
-(defun/autoloaded source-location-file-position (location)
+(defun/auto source-location-file-position (location)
   "Return the file position of the [defining form][clhs] or NIL
   if it's not available. The first position is 0."
   (let ((pos (source-location-buffer-position location)))
@@ -58,7 +58,7 @@
         (1- pos)
         pos)))
 
-(defun/autoloaded source-location-buffer (location)
+(defun/auto source-location-buffer (location)
   "Return the name of the Emacs buffer of the [defining form][clhs] or
   NIL if there is no such Emacs buffer."
   (let ((buffer-entry (find :buffer (rest location) :key #'first))
@@ -67,7 +67,7 @@
     (or (second buffer-entry)
         (second buffer-and-file-entry))))
 
-(defun/autoloaded source-location-buffer-position (location)
+(defun/auto source-location-buffer-position (location)
   "Return the position of the [defining form][clhs] in
   SOURCE-LOCATION-BUFFER or NIL if it's not available. The first
   position is 1."
@@ -78,14 +78,14 @@
           (offset-entry
            (+ (second offset-entry) (third offset-entry))))))
 
-(defun/autoloaded source-location-snippet (location)
+(defun/auto source-location-snippet (location)
   "Return the [defining form][clhs] or a prefix of it as a string or NIL
   if it's not available."
   (and (eq (first location) :location)
        (let ((snippet-entry (find :snippet (rest location) :key #'first)))
          (getf snippet-entry :snippet))))
 
-(defun/autoloaded source-location-adjusted-file-position (location)
+(defun/auto source-location-adjusted-file-position (location)
   "Return the actual file position LOCATION points to allowing for
   some deviation from the raw SOURCE-LOCATION-FILE-POSITION, which is
   adjusted by searching for the nearest occurrence of

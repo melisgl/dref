@@ -736,7 +736,7 @@
                                           (list (first locative-args)))
                             symbol `(reader ,(first locative-args)))))
 
-(defun/autoloaded accessor-slot-definition (dref)
+(defun/auto accessor-slot-definition (dref)
   "Return the SLOT-DEFINITION object corresponding to DREF, which may
   denote a READER, a WRITER or an ACCESSOR."
   (nth-value-or-with-obj-or-def (dref 0)
@@ -1169,8 +1169,8 @@
 (defmethod source-location* ((dref declaration-dref))
   #+sbcl
   (let ((name (dref-name dref)))
-    (when-let (defsrc (sb-introspect:find-definition-source
-                       (sb-int:info :declaration :known name)))
+    (when-let* ((info (sb-int:info :declaration :known name))
+                (defsrc (sb-introspect:find-definition-source info)))
       (definition-source-to-source-location defsrc :declaration name)))
   #-sbcl
   '(:error "Don't know how to find the source location of declarations."))

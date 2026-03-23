@@ -1,3 +1,3 @@
 (in-package :dref)
 
-(defun/autoloaded ensure-dref-loaded ())
+(defun/auto ensure-dref-loaded ())

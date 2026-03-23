@@ -127,7 +127,10 @@
                                  :locative `(unknown ,dspec)))))
 
 
-(defun/autoloaded translate-sb-source-location (sb-source-location)
+;;; Manually autoloaded because it's only for SBCL.
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (fmakunbound 'translate-sb-source-location))
+(defun translate-sb-source-location (sb-source-location)
   (definition-source-to-source-location
    (sb-introspect::translate-source-location sb-source-location)
    nil nil))

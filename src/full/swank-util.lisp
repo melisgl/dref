@@ -120,7 +120,9 @@
 ;;; not widely supported SWANK-BACKEND:FIND-SOURCE-LOCATION before
 ;;; calling the much slower but more complete
 ;;; SWANK-BACKEND:FIND-DEFINITIONS.
-(defun/autoloaded swank-source-location* (object name &rest locatives)
+;;;
+;;; AUTOLOADed manually.
+(defun swank-source-location* (object name &rest locatives)
   (swank/backend:converting-errors-to-error-location
     (or (swank-object-source-location object)
         (apply #'swank-source-location name locatives))))

@@ -73,7 +73,7 @@
                 (set-difference (locative-types) *cachable-locative-types*)))
          ,@body))))
 
-(defun/autoloaded definitions (name &key (dtype t) (sort t))
+(defun/auto definitions (name &key (dtype t) (sort t))
   """List all definitions of NAME that are of DTYPE as [DREFs][class].
 
   Just as `(DREF NAME LOCATIVE)` returns the canonical definition, the
@@ -131,8 +131,8 @@
                                name locative-type))
     drefs))
 
-(defun/autoloaded dref-apropos (name &key package external-only case-sensitive
-                                     (dtype t) (sort t))
+(defun/auto dref-apropos (name &key package external-only case-sensitive
+                               (dtype t) (sort t))
   """Return a list of [DREF][class]s corresponding to existing
   definitions that match the various arguments. First, `(DREF-APROPOS
   NIL)` lists all definitions in the running Lisp and maybe more (e.g.
