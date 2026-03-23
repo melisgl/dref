@@ -37,6 +37,8 @@ for the latest version.
 
     - Depends on: autoload, mgl-pax-bootstrap, named-readtables, pythonic-string-reader
 
+    - Defsystem depends on: autoload
+
 - [system] "dref/full"
 
     - Description: DRef with everything loaded. There should be no need
@@ -49,6 +51,8 @@ for the latest version.
         For a discussion of conditional dependencies, see Backends.
 
     - Depends on: alexandria, closer-mop, dref, mgl-pax, sb-introspect(?), swank(?)
+
+    - Defsystem depends on: autoload
 
 ## Introduction
 

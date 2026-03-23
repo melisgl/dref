@@ -36,13 +36,22 @@
   (format stream "![](src/dref-logo.jpg)~%~%"))
 
 (defun update-dref-readmes (&key (output-dir ""))
-  (let ((*document-url-versions* '(1)))
-    (document (dref-sections)
-              :pages (dref-pages* :plain :output-dir output-dir)
-              :format :plain)
-    (document (dref-sections)
-              :pages (dref-pages* :markdown :output-dir output-dir)
-              :format :markdown)))
+  ;; Most PAX symbols that we use are from mgl-pax-bootstrap, but
+  ;; PAX:DOCUMENT and PAX:*DOCUMENT-URL-VERSIONS* are not. Normally,
+  ;; PAX's loaddefs.lisp exports these symbols. However, when
+  ;; (AUTOLOAD:RECORD-AUTOLOADS "MGL-PAX") is run, PAX's
+  ;; autoloads.lisp is emptied, and these symbols are only exported in
+  ;; mgl-pax/document. Since mgl-pax/document (indirectly) depends on
+  ;; dref/full, we would get a symbol conflict if we didn't qualify
+  ;; their names with the PAX:: prefix.
+  (let ((pax::*document-url-versions* '(1)))
+    (declare (special pax::*document-url-versions*))
+    (pax::document (dref-sections)
+                   :pages (dref-pages* :plain :output-dir output-dir)
+                   :format :plain)
+    (pax::document (dref-sections)
+                   :pages (dref-pages* :markdown :output-dir output-dir)
+                   :format :markdown)))
 
 
 #+nil
