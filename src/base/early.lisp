@@ -25,9 +25,6 @@
   docstring or source location.")
 
 
-(autoload accessor-slot-definition "dref/full")
-
-
 (defmacro defstruct* (name-and-options &rest slot-descriptions)
   "Like DEFSTRUCT, but support :DOCUMENTATION among slot options.
   The documentation is attached to the slot's STRUCTURE-ACCESSOR.
@@ -103,23 +100,7 @@
            (setf (definition-property ,%xref 'source-location)
                  (this-source-location)))))))
 
-(autoload dtypep "dref/full")
-
-
-(autoload definitions "dref/full")
-(autoload dref-apropos "dref/full")
-
-
-(autoload make-source-location "dref/full")
-(autoload source-location-p "dref/full")
-(autoload source-location-file "dref/full")
-(autoload source-location-file-position "dref/full")
-(autoload source-location-buffer "dref/full")
-(autoload source-location-buffer-position "dref/full")
-(autoload source-location-snippet "dref/full")
-(autoload source-location-adjusted-file-position "dref/full")
-
-
-(autoload swank-source-location* "dref/full")
 #+sbcl
 (autoload translate-sb-source-location "dref/full")
+#-sbcl
+(autoload swank-source-location* "dref/full")
