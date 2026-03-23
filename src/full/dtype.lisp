@@ -25,7 +25,7 @@
   `(or ,@(pseudo-locative-types)))
 
 
-(defun/autoloaded dtypep (dref dtype)
+(defun/auto dtypep (dref dtype)
   """See if DREF is of DTYPE.
 
   - _[Atomic locatives][@locative]:_ If DTYPE is a @LOCATIVE-TYPE,

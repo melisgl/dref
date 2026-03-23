@@ -334,10 +334,6 @@
                            message
                            (locate-error-message-args condition)))))))
 
-;;; This gets clobbered with an empty function when DREF/FULL is
-;;; loaded.
-(autoload ensure-dref-loaded "dref/full")
-
 (declaim (ftype function dref-class)
          (ftype function %locate))
 

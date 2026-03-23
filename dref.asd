@@ -19,6 +19,10 @@
   the `dref/full` ASDF:SYSTEM."
   :depends-on ("autoload" "mgl-pax-bootstrap" "named-readtables"
                "pythonic-string-reader")
+  :defsystem-depends-on ("autoload")
+  :class "autoload:autoload-system"
+  :auto-depends-on ("dref/full")
+  :auto-loaddefs ("src/base/loaddefs.lisp")
   ;; We compile each file in a separate compilation units (even though
   ;; they are all nested in another WITH-COMPILATION-UNIT) to get
   ;; warnings about forward references from one file to a later one.
@@ -28,6 +32,7 @@
   :components ((:module "src/base/"
                 :serial t
                 :components ((:file "package")
+                             (:file "loaddefs")
                              (:file "util")
                              (:file "dref")
                              (:file "extension-api")
@@ -52,6 +57,8 @@
   :depends-on ("alexandria" "closer-mop" "dref" "mgl-pax"
                (:feature (:not (:or :swank :sbcl)) "swank")
                (:feature :sbcl "sb-introspect"))
+  :defsystem-depends-on ("autoload")
+  :class "autoload:autoload-system"
   :around-compile (lambda (thunk)
                     (with-compilation-unit (:override t)
                       (funcall thunk)))

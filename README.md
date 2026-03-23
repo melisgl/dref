@@ -68,6 +68,8 @@ for the latest version.
     - _Bug tracker:_ [https://github.com/melisgl/dref/issues](https://github.com/melisgl/dref/issues)
     - _Source control:_ [GIT](https://github.com/melisgl/dref.git)
     - *Depends on:* autoload, mgl-pax-bootstrap, named-readtables, pythonic-string-reader
+    - *Auto depends on:* [dref/full][0c7e]
+    - *Defsystem depends on:* autoload
 
 <a id="x-28-22dref-2Ffull-22-20ASDF-2FSYSTEM-3ASYSTEM-29"></a>
 
@@ -82,6 +84,7 @@ for the latest version.
         
         For a discussion of conditional dependencies, see [Backends][884d].
     - *Depends on:* alexandria, closer-mop, [dref][021a], mgl-pax, sb-introspect(?), swank(?)
+    - *Defsystem depends on:* autoload
 
 <a id="x-28DREF-3A-40INTRODUCTION-20MGL-PAX-3ASECTION-29"></a>
 
