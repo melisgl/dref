@@ -64,8 +64,8 @@ for the latest version.
     - _Licence:_ MIT, see COPYING.
     - _Author:_ Gábor Melis
     - _Mailto:_ [mega@retes.hu](mailto:mega@retes.hu)
-    - _Homepage:_ [http://github.com/melisgl/dref/](http://github.com/melisgl/dref/)
-    - _Bug tracker:_ [https://github.com/melisgl/dref/issues](https://github.com/melisgl/dref/issues)
+    - _Homepage:_ <http://github.com/melisgl/dref/>
+    - _Bug tracker:_ <https://github.com/melisgl/dref/issues>
     - _Source control:_ [GIT](https://github.com/melisgl/dref.git)
     - *Depends on:* autoload, mgl-pax-bootstrap, named-readtables, pythonic-string-reader
     - *Auto depends on:* [dref/full][0c7e]
