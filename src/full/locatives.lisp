@@ -1280,7 +1280,7 @@
 
 (defmethod source-location* ((dref asdf-system-dref))
   (let ((system (resolve dref)))
-    (if-let (location (asdf/system:system-source-file system))
+    (if-let (location (asdf:system-source-file system))
       (make-source-location
        :file (namestring location)
        :file-position 0

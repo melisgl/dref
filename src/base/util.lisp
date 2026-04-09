@@ -136,7 +136,7 @@
         ((error
            (lambda (e)
              (when (and warnp
-                        (not (typep e 'asdf/find-component:missing-component)))
+                        (not (typep e 'asdf:missing-component)))
                (warn "~@<Loading ASDF system definition ~S failed with: ~A~:@>"
                      name e))
              (when (not errorp)
