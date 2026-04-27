@@ -16,8 +16,8 @@
   (source-location-adjusted-file-position function)
   (this-source-location macro))
 
-(defun/auto make-source-location (&key file file-position
-                                             buffer buffer-position snippet)
+(defun/auto make-source-location (&key file file-position buffer
+                                  buffer-position snippet)
   "Make a Swank source location. The ultimate reference is
   `slime-goto-source-location` in `slime.el`. When SNIPPET is
   provided, the match nearest to FILE-POSITION is determined (see the

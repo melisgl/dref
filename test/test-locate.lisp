@@ -70,10 +70,10 @@
     (dref::check-locator-return-values (dref 'print 'function) 'class
                                        (dref 'print 'function)))
   (signals (error :pred "DREF-EXT:DREF-CLASS of CLASS is DREF-EXT:CLASS-DREF")
-   (dref::check-locator-return-values (dref 'print 'function) 'class
-                                      (make-instance 'constant-dref
-                                                     :name 'pi
-                                                     :locative 'class))))
+    (dref::check-locator-return-values (dref 'print 'function) 'class
+                                       (make-instance 'constant-dref
+                                                      :name 'pi
+                                                      :locative 'class))))
 
 (deftest test-check-cast-name-change ()
   (signals (error :pred "in violation of DREF-EXT::@CAST-NAME-CHANGE.")

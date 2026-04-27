@@ -285,7 +285,7 @@
   (destructuring-bind (locative-type &rest lambda-list)
       (ensure-list* locative-type-and-lambda-list)
     (destructuring-bind (&optional dref-defclass dref-class dref-superclasses
-                           dref-slots)
+                         dref-slots)
         dref-defclass-form
       (declare (ignore dref-class))
       (when (and dref-defclass-form
@@ -872,10 +872,10 @@
     (when (member locative-type (pseudo-locative-types))
       (assert (and (not (eq type-locative-type locative-type))
                    (member type-locative-type (pseudo-locative-types))) ()
-                   "~@<~S: Casting to pseudo locative type ~S ~
-                   from non-pseudo ~S is not legal.~:@>"
-                   'define-cast locative-type
-                   (or type-locative-type dref-class)))
+              "~@<~S: Casting to pseudo locative type ~S ~
+              from non-pseudo ~S is not legal.~:@>"
+              'define-cast locative-type
+              (or type-locative-type dref-class)))
     (when (and type-locative-type
                (not (or (member type-locative-type
                                 (locative-type-direct-subs locative-type))

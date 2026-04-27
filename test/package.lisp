@@ -2,6 +2,6 @@
   (:documentation "Test package for DRef.")
   (:use #:common-lisp #:dref #:dref-ext #:try)
   (:export #:test
-           #:check-ref
-           #:check-ref-sets
-           #:check-source-location))
+   #:check-ref
+   #:check-ref-sets
+   #:check-source-location))

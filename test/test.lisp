@@ -529,12 +529,12 @@
            (alexandria:featurep '(:not :ecl)))
           ((eq type 'package)
            (alexandria:featurep '(:not (:or :abcl :allegro :clisp :cmucl
-                                            :ecl))))
+                                        :ecl))))
           (t
            t))))
 
 (defun check-source-location (name locative prefix &optional alternative-prefix
-                                                     failure-expected-p)
+                              failure-expected-p)
   (let* ((ref (xref name locative))
          (resolved (resolve ref nil)))
     ;; Test SOURCE-LOCATION with a REFERENCE and a resolved object if
@@ -897,22 +897,22 @@
     (with-test ("NAME is STRING")
       (with-test ("full match")
         (check-ref-sets (dref-apropos "test" :package :dref-test
-                                             :external-only t)
+                                      :external-only t)
                         `(,(xref 'dref-test:test 'function))))
       (with-test ("partial match")
         (check-ref-sets (dref-apropos "es" :package :dref-test
-                                           :external-only t)
+                                      :external-only t)
                         `(,(xref 'dref-test:test 'function))))
       (with-test ("case-sensitive")
         (with-test ("no match")
           (check-ref-sets (dref-apropos "es" :package :dref-test
-                                             :external-only t
-                                             :case-sensitive t)
+                                        :external-only t
+                                        :case-sensitive t)
                           ()))
         (with-test ("match")
           (check-ref-sets (dref-apropos "ES" :package :dref-test
-                                             :external-only t
-                                             :case-sensitive t)
+                                        :external-only t
+                                        :case-sensitive t)
                           `(,(xref 'dref-test:test 'function))))))
     (with-test ("PACKAGE is NIL")
       (check-ref-sets (dref-apropos '%test9jwern%)
@@ -928,11 +928,11 @@
       (with-test ("case-sensitive")
         (with-test ("no match")
           (check-ref-sets (dref-apropos '%test9jwern% :package "dref"
-                                                      :case-sensitive t)
+                                        :case-sensitive t)
                           ()))
         (with-test ("match")
           (check-ref-sets (dref-apropos '%test9jwern% :package "DREF"
-                                                      :case-sensitive t)
+                                        :case-sensitive t)
                           `(,(xref 'dref-test::%test9jwern%
                                    'function))))))
     (with-test ("PACKAGE is :ANY")
@@ -977,22 +977,22 @@
       (check-ref-sets (dref-apropos 'foo :dtype '(type) :package '#:dref-test)
                       `(,(xref 'foo 'class)))
       (check-ref-sets (dref-apropos 'my-error :dtype 'type
-                                              :package '#:dref-test)
+                                    :package '#:dref-test)
                       `(,(xref 'my-error 'condition)))
       (check-ref-sets (dref-apropos 'my-error :dtype '(type)
-                                              :package '#:dref-test)
+                                    :package '#:dref-test)
                       `(,(xref 'my-error 'condition)))
       (check-ref-sets (dref-apropos 'my-error :dtype 'condition
-                                              :package '#:dref-test)
+                                    :package '#:dref-test)
                       `(,(xref 'my-error 'condition)))
       (check-ref-sets (dref-apropos 'my-error :dtype '(condition)
-                                              :package '#:dref-test)
+                                    :package '#:dref-test)
                       `(,(xref 'my-error 'condition)))
       (check-ref-sets (dref-apropos 'my-error :dtype 'class
-                                              :package '#:dref-test)
+                                    :package '#:dref-test)
                       `(,(xref 'my-error 'condition)))
       (check-ref-sets (dref-apropos 'my-error :dtype '(class)
-                                              :package '#:dref-test)
+                                    :package '#:dref-test)
                       `(,(xref 'my-error 'condition)))))
   (with-test ("invalid dtype")
     (signals (error)
@@ -1003,7 +1003,7 @@
     (is (= (length (dref-apropos 'test-gf :package 'dref-test :dtype 'method))
            3))
     (check-ref-sets (dref-apropos 'test-gf :package 'dref-test
-                                           :dtype '(method (number)))
+                                  :dtype '(method (number)))
                     `(,(xref 'test-gf '(method (number))))))
   (with-test ("setf name")
     (with-failure-expected ((and (alexandria:featurep '(:or :abcl))

@@ -477,13 +477,13 @@
   #+(or abcl allegro ccl clisp cmucl ecl sbcl)
   (ignore-errors
    (#+(or abcl allegro) mop:find-method-combination
-      #+ccl ccl:find-method-combination
-      #+cmucl clos-mop:find-method-combination
-      #+(or clisp clasp ecl lispworks) clos:find-method-combination
-      #+mezzano mezzano.clos:find-method-combination
-      #+sbcl sb-mop:find-method-combination
-      #+sicl sicl-clos:find-method-combination
-      #'documentation name ())))
+    #+ccl ccl:find-method-combination
+    #+cmucl clos-mop:find-method-combination
+    #+(or clisp clasp ecl lispworks) clos:find-method-combination
+    #+mezzano mezzano.clos:find-method-combination
+    #+sbcl sb-mop:find-method-combination
+    #+sicl sicl-clos:find-method-combination
+    #'documentation name ())))
 
 
 ;;;; Strings
