@@ -317,6 +317,9 @@
           (cond ((functionp function-designator)
                  (unencapsulated-function function-designator))
                 ((valid-function-name-p function-designator)
+                 #+ecl
+                 function-designator
+                 #-ecl
                  (if (not (eq (fdefinition* function-designator)
                               (fdefinition function-designator)))
                      (fdefinition* function-designator)
