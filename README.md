@@ -1386,8 +1386,8 @@ based on the `DOC-TYPE` argument of [`CL:DOCUMENTATION`][c5ae].
         (defstruct* my-struct
           (my-slot nil :documentation "docstring"))
     
-    In addition normal `DEFSTRUCT` processing, the above also does the
-    moral equivalent of
+    In addition to the normal `DEFSTRUCT` processing, the above also does
+    the moral equivalent of
     
         (setf (documentation 'my-struct-my-slot 'function) "docstring")
 

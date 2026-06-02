@@ -33,13 +33,23 @@
       (defstruct* my-struct
         (my-slot nil :documentation \"docstring\"))
 
-  In addition normal DEFSTRUCT processing, the above also does the
-  moral equivalent of
+  In addition to the normal DEFSTRUCT processing, the above also does
+  the moral equivalent of
 
       (setf (documentation 'my-struct-my-slot 'function) \"docstring\")"
   (destructuring-bind (name &rest options) (ensure-list* name-and-options)
-    (let* ((conc-name (or (getf options :conc-name (format nil "~A-" name))
-                          ""))
+    (let* ((conc-name-option (find :conc-name options :key (lambda (x)
+                                                             (if (consp x)
+                                                                 (car x)
+                                                                 x))))
+           (conc-name (cond ((not conc-name-option)
+                             (format nil "~A-" name))
+                            ((or (atom conc-name-option)
+                                 (null (cdr conc-name-option))
+                                 (null (second conc-name-option)))
+                             "")
+                            (t
+                             (string (second conc-name-option)))))
            (not-found (gensym))
            (set-doc-forms ())
            (new-sds
