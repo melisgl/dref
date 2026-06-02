@@ -317,7 +317,10 @@
           (cond ((functionp function-designator)
                  (unencapsulated-function function-designator))
                 ((valid-function-name-p function-designator)
-                 function-designator))))
+                 (if (not (eq (fdefinition* function-designator)
+                              (fdefinition function-designator)))
+                     (fdefinition* function-designator)
+                     function-designator)))))
     #+cmucl
     (unless (functionp function-designator)
       ;; On CMUCL, SWANK-BACKEND:ARGLIST works better with function
