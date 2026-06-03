@@ -115,6 +115,7 @@
   ```cl-transcript
   (docstring (dref '*my-var* 'variable))
   => "This is my var."
+  => NIL
   ```
 
   For definitions associated with objects, the definition can be
@@ -787,6 +788,7 @@
   (docstring function)
   (source-location function))
 
+;;; FIXME: What about non-DREF XREFs?
 (defmacro nth-value-or-with-obj-or-def ((obj nth-value) &body body)
   "Evaluate BODY. If its NTH-VALUE is NIL, evaluate it again with OBJ
   bound to a RESOLVEd object (if OBJ was a definition) or a
@@ -889,8 +891,9 @@
   "Return the docstring from the definition of OBJECT.
   As the second value, return the *PACKAGE* that was in effect when
   the docstring was installed or NIL if it cannot be determined (this
-  is used by PAX:DOCUMENT when PAX::@PARSING the docstring). This
-  function is similar in purpose to CL:DOCUMENTATION.
+  is used by PAX:DOCUMENT when determinining the
+  PAX::@PACKAGE-AND-READTABLE of docstrings). This function is similar
+  in purpose to CL:DOCUMENTATION.
 
   Note that some locative types such as [ASDF:SYSTEMS][locative] and
   [DECLARATIONs][locative] have no docstrings, and some Lisp

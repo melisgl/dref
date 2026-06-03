@@ -85,6 +85,7 @@ and SOURCE-LOCATION.
 
     (docstring (dref '*my-var* 'variable))
     => "This is my var."
+    => NIL
 
 For definitions associated with objects, the definition can be
 LOCATEd from the object:
@@ -800,8 +801,9 @@ LOCATE).
     Return the docstring from the definition of OBJECT.
     As the second value, return the *PACKAGE* that was in effect when
     the docstring was installed or NIL if it cannot be determined (this
-    is used by PAX:DOCUMENT when Parsing the docstring). This
-    function is similar in purpose to CL:DOCUMENTATION.
+    is used by PAX:DOCUMENT when determinining the
+    Package and Readtable of docstrings). This function is similar
+    in purpose to CL:DOCUMENTATION.
 
     Note that some locative types such as ASDF:SYSTEMs and
     DECLARATIONs have no docstrings, and some Lisp
@@ -1951,13 +1953,31 @@ macros.
 
     - The default method returns NIL.
 
-    - There is also a method specialized on DREFs, that looks
-      up the DEFINITION-PROPERTY called DOCSTRING and returns its value
-      with VALUES-LIST. Thus, a docstring and a package can be specified
-      with something like
+    - A three-stage logic is implemented by an unspecialized :AROUND
+      method for docstrings and packages.
 
-            (setf (definition-property xref 'docstring)
-                  (list docstring *package*))
+        - First, the primary method is called. If it returns a non-NIL
+          docstring and package, then these are returned by DOCSTRING*.
+
+        - Definition default: The DEFINITION-PROPERTY with indicator
+          DOCSTRING of the LOCATEd definition of OBJECT provides
+          defaults for the docstring and/or the package, whichever are
+          NIL. These can be set for example as
+
+                (setf (definition-property xref 'docstring)
+                      (list docstring *package*))
+
+            Note that the docstring and the package or both may be NIL.
+
+        - Package-wide default: If the DREF-NAME of the LOCATEd
+          definition is a symbol, then an irregular DEFINITION-PROPERTY
+          provides further defaults. To default the docstring package of
+          all names of package X to package Y, you could write
+
+                (setf (definition-property `(:package ,(find-package :x)) 'docstring)
+                      (list "FIXME: Missing documentation." (find-package :y)))
+
+    See Package and Readtable.
 
     This function is for extension only. Do not call it directly.
 
@@ -2004,16 +2024,25 @@ The following functions take an XREF argument and not a DREF to
 allow working with non-canonical or
 non-existent definitions.
 
-- [function] DEFINITION-PROPERTY XREF INDICATOR
+- [function] DEFINITION-PROPERTY OBJ INDICATOR
 
-    Return the value of the property associated with XREF whose name
+    Return the value of the property associated with OBJ whose name
     is EQL to INDICATOR. The second return value indicates whether the
     property was found. SETFable.
 
-- [function] DELETE-DEFINITION-PROPERTY XREF INDICATOR
+    - Regular definition: OBJ is commonly an XREF. XREFs that are
+      XREF= are equivalent for the purposes of DEFINITION-PROPERTY.
 
-    Delete the property associated with XREF whose name is EQL to INDICATOR.
-    Return true if the property was found.
+    - Irregular case: If OBJ is not an XREF (and, by extension, not a
+      DREF), it is equivalent to other objects to which it is EQUAL.
+
+    For example, see the DOCSTRING* generic-function, which uses both
+    the regular and the irregular cases.
+
+- [function] DELETE-DEFINITION-PROPERTY OBJ INDICATOR
+
+    Delete the property INDICATOR of OBJ established by setting
+    DEFINITION-PROPERTY. Return true if the property was found.
 
 - [function] DEFINITION-PROPERTIES XREF
 

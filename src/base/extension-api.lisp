@@ -1023,22 +1023,65 @@
 
   - The default method returns NIL.
 
-  - There is also a method specialized on [DREFs][class], that looks
-    up the DEFINITION-PROPERTY called DOCSTRING and returns its value
-    with VALUES-LIST. Thus, a docstring and a package can be specified
-    with something like
+  - A three-stage logic is implemented by an unspecialized :AROUND
+    method for docstrings and packages.
 
-      ```
-      (setf (definition-property xref 'docstring)
-            (list docstring *package*))
-      ```
+      - First, the primary method is called. If it returns a non-NIL
+        docstring and package, then these are returned by DOCSTRING*.
+
+      - _Definition default_: The DEFINITION-PROPERTY with indicator
+        DOCSTRING of the LOCATEd definition of OBJECT provides
+        defaults for the docstring and/or the package, whichever are
+        NIL. These can be set for example as
+
+          ```
+          (setf (definition-property xref 'docstring)
+                (list docstring *package*))
+          ```
+
+          Note that the docstring and the package or both may be NIL.
+
+      - _Package-wide default_: If the DREF-NAME of the LOCATEd
+        definition is a symbol, then an irregular DEFINITION-PROPERTY
+        provides further defaults. To default the docstring package of
+        all names of package `X` to package `Y`, you could write
+
+          ```
+          (setf (definition-property `(:package ,(find-package :x)) 'docstring)
+                (list \"FIXME: Missing documentation.\" (find-package :y)))
+          ```
+
+  See PAX::@PACKAGE-AND-READTABLE.
 
   This function is for extension only. Do not call it directly.")
   (:method (object)
     (declare (ignorable object))
     nil)
-  (:method ((dref dref))
-    (values-list (definition-property dref 'docstring))))
+  (:method :around (object)
+    (let ((docstring nil)
+          (package nil))
+      (flet ((note-values (&optional docstring1 package1)
+               (setq docstring (or docstring docstring1)
+                     package (or package package1))
+               (when (and docstring package)
+                 (return-from docstring* (values docstring package)))))
+        (multiple-value-call #'note-values (call-next-method))
+        (let ((dref (locate object nil)))
+          (when dref
+            ;; Definition default
+            (apply #'note-values (definition-property dref 'docstring))
+            ;; Package default
+            (let ((name-package (dref-name-package dref)))
+              (when name-package
+                (apply #'note-values
+                       (definition-property `(:package ,name-package)
+                                            'docstring)))))))
+      (values docstring package))))
+
+(defun dref-name-package (dref)
+  (let ((name (dref-name dref)))
+    (when (symbolp name)
+      (symbol-package name))))
 
 (defgeneric source-location* (object)
   (:documentation "To extend SOURCE-LOCATION, specialize OBJECT on a
@@ -1185,13 +1228,14 @@
   (delete-definition-properties function)
   (move-definition-properties function))
 
-;;; Map (NAME LOCATIVE) to a list of (PROPERTY-NAME . PROPERTY-VALUE)
-;;; elements. For example,
+;;; Map (:XREF NAME LOCATIVE) and generic (:OBJECT OBJECT) keys to a
+;;; list of (PROPERTY-NAME . PROPERTY-VALUE) elements. For example,
 ;;;
-;;;     (:COMMON-LISP READTABLE) -> ((DOCSTRING "XXX" :CL))
+;;;     (:XREF :COMMON-LISP READTABLE) -> ((DOCSTRING "XXX" #<PACKAGE "CL">))
 ;;;
 ;;; means that (DREF :COMMON-LISP :READTABLE)'s DOCSTRING property has
-;;; the value ("XXX" :CL), which the default DOCSTRING* method uses.
+;;; the value ("XXX" #<PACKAGE "CL">), which is the definition default
+;;; that the DOCSTRING* method uses.
 ;;;
 ;;; FIXME: If a definition is no longer, then perhaps its properties
 ;;; should be automatically deleted. They are just harmless garbage to
@@ -1199,21 +1243,32 @@
 (defvar *definition-properties* (make-hash-table :test #'equal))
 
 (declaim (inline definition-property-key))
-(defun definition-property-key (xref)
-  (list (xref-name xref) (xref-locative xref)))
+(defun definition-property-key (obj)
+  (if (typep obj 'xref)
+      (list :xref (xref-name obj) (xref-locative obj))
+      (list :object obj)))
 
-(defun definition-property (xref indicator)
-  "Return the value of the property associated with XREF whose name
+(defun definition-property (obj indicator)
+  "Return the value of the property associated with OBJ whose name
   is EQL to INDICATOR. The second return value indicates whether the
-  property was found. SETFable."
-  (let ((entry (assoc indicator (gethash (definition-property-key xref)
+  property was found. SETFable.
+
+  - _Regular definition_: OBJ is commonly an XREF. XREFs that are
+    XREF= are equivalent for the purposes of DEFINITION-PROPERTY.
+
+  - _Irregular case_: If OBJ is not an XREF (and, by extension, not a
+    DREF), it is equivalent to other objects to which it is EQUAL.
+
+  For example, see the DOCSTRING* generic-function, which uses both
+  the regular and the irregular cases."
+  (let ((entry (assoc indicator (gethash (definition-property-key obj)
                                          *definition-properties*))))
     (if entry
         (values (cdr entry) t)
         (values nil nil))))
 
-(defun set-definition-property (xref indicator value)
-  (let* ((key (definition-property-key xref))
+(defun set-definition-property (obj indicator value)
+  (let* ((key (definition-property-key obj))
          (entry (assoc indicator (gethash key *definition-properties*))))
     (if entry
         (setf (cdr entry) value)
@@ -1222,10 +1277,10 @@
 
 (defsetf definition-property set-definition-property)
 
-(defun delete-definition-property (xref indicator)
-  "Delete the property associated with XREF whose name is EQL to INDICATOR.
-  Return true if the property was found."
-  (let* ((key (definition-property-key xref))
+(defun delete-definition-property (obj indicator)
+  "Delete the property INDICATOR of OBJ established by setting
+  DEFINITION-PROPERTY. Return true if the property was found."
+  (let* ((key (definition-property-key obj))
          (entry (assoc indicator (gethash key *definition-properties*))))
     (when entry
       (setf (gethash key *definition-properties*)

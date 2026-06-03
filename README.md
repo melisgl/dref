@@ -122,6 +122,7 @@ and [`SOURCE-LOCATION`][32da].
 ```common-lisp
 (docstring (dref '*my-var* 'variable))
 => "This is my var."
+=> NIL
 ```
 
 For definitions associated with objects, the definition can be
@@ -1022,8 +1023,9 @@ The following functions take a single argument, which may be a
     Return the docstring from the definition of `OBJECT`.
     As the second value, return the [`*PACKAGE*`][5ed1] that was in effect when
     the docstring was installed or `NIL` if it cannot be determined (this
-    is used by `PAX:DOCUMENT` when Parsing the docstring). This
-    function is similar in purpose to [`CL:DOCUMENTATION`][c5ae].
+    is used by `PAX:DOCUMENT` when determinining the
+    Package and Readtable of docstrings). This function is similar
+    in purpose to [`CL:DOCUMENTATION`][c5ae].
     
     Note that some locative types such as [`ASDF:SYSTEM`s][c097] and
     [`DECLARATION`s][6e04] have no docstrings, and some Lisp
@@ -2440,15 +2442,35 @@ macros.
     
     - The default method returns `NIL`.
     
-    - There is also a method specialized on [`DREF`s][d930], that looks
-      up the [`DEFINITION-PROPERTY`][5f91] called `DOCSTRING` and returns its value
-      with [`VALUES-LIST`][dbd4]. Thus, a docstring and a package can be specified
-      with something like
+    - A three-stage logic is implemented by an unspecialized `:AROUND`
+      method for docstrings and packages.
     
-        ```
-        (setf (definition-property xref 'docstring)
-              (list docstring *package*))
-        ```
+        - First, the primary method is called. If it returns a non-`NIL`
+          docstring and package, then these are returned by `DOCSTRING*`.
+    
+        - *Definition default*: The [`DEFINITION-PROPERTY`][5f91] with indicator
+          `DOCSTRING` of the `LOCATE`d definition of `OBJECT` provides
+          defaults for the docstring and/or the package, whichever are
+          `NIL`. These can be set for example as
+    
+            ```
+            (setf (definition-property xref 'docstring)
+                  (list docstring *package*))
+            ```
+    
+            Note that the docstring and the package or both may be `NIL`.
+    
+        - *Package-wide default*: If the [`DREF-NAME`][1e36] of the `LOCATE`d
+          definition is a symbol, then an irregular `DEFINITION-PROPERTY`
+          provides further defaults. To default the docstring package of
+          all names of package `X` to package `Y`, you could write
+    
+            ```
+            (setf (definition-property `(:package ,(find-package :x)) 'docstring)
+                  (list "FIXME: Missing documentation." (find-package :y)))
+            ```
+    
+    See Package and Readtable.
     
     This function is for extension only. Do not call it directly.
 
@@ -2505,18 +2527,27 @@ non-existent definitions.
 
 <a id="x-28DREF-EXT-3ADEFINITION-PROPERTY-20FUNCTION-29"></a>
 
-- [function] **DEFINITION-PROPERTY** *XREF INDICATOR*
+- [function] **DEFINITION-PROPERTY** *OBJ INDICATOR*
 
-    Return the value of the property associated with `XREF` whose name
+    Return the value of the property associated with `OBJ` whose name
     is `EQL`([`0`][db03] [`1`][5fd4]) to `INDICATOR`. The second return value indicates whether the
     property was found. [`SETF`][a138]able.
+    
+    - *Regular definition*: `OBJ` is commonly an `XREF`([`0`][1538] [`1`][cda7]). `XREF`s that are
+      [`XREF=`][0617] are equivalent for the purposes of `DEFINITION-PROPERTY`.
+    
+    - *Irregular case*: If `OBJ` is not an `XREF` (and, by extension, not a
+      `DREF`([`0`][d930] [`1`][7e92])), it is equivalent to other objects to which it is [`EQUAL`][3fb5].
+    
+    For example, see the [`DOCSTRING*`][9fd4] generic-function, which uses both
+    the regular and the irregular cases.
 
 <a id="x-28DREF-EXT-3ADELETE-DEFINITION-PROPERTY-20FUNCTION-29"></a>
 
-- [function] **DELETE-DEFINITION-PROPERTY** *XREF INDICATOR*
+- [function] **DELETE-DEFINITION-PROPERTY** *OBJ INDICATOR*
 
-    Delete the property associated with `XREF` whose name is `EQL`([`0`][db03] [`1`][5fd4]) to `INDICATOR`.
-    Return true if the property was found.
+    Delete the property `INDICATOR` of `OBJ` established by setting
+    [`DEFINITION-PROPERTY`][5f91]. Return true if the property was found.
 
 <a id="x-28DREF-EXT-3ADEFINITION-PROPERTIES-20FUNCTION-29"></a>
 
