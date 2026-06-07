@@ -47,7 +47,7 @@
       (let ((file (sb-introspect:definition-source-pathname defsrc)))
         (when file
           (make-source-location
-           :file file
+           :file (translate-logical-pathname file)
            :file-position (or (ignore-errors (defsrc-file-position defsrc))
                               0))))))
 
