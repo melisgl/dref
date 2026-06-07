@@ -2999,7 +2999,7 @@ the details, see the Elisp function `slime-goto-source-location`.
   [80a8]: #x-28DREF-EXT-3ALOCATIVE-TYPE-DIRECT-SUPERS-20FUNCTION-29 "DREF-EXT:LOCATIVE-TYPE-DIRECT-SUPERS FUNCTION"
   [817d]: http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_d.htm#deftype_lambda_list "\"deftype lambda list\" (MGL-PAX:CLHS MGL-PAX:GLOSSARY-TERM)"
   [81f7]: http://www.lispworks.com/documentation/HyperSpec/Body/s_fn.htm "FUNCTION (MGL-PAX:CLHS MGL-PAX:MACRO)"
-  [82ae]: http://www.lispworks.com/documentation/HyperSpec/Body/t_mem_m.htm "MEMBER (MGL-PAX:CLHS FUNCTION)"
+  [82ae]: http://www.lispworks.com/documentation/HyperSpec/Body/f_mem_m.htm "MEMBER (MGL-PAX:CLHS FUNCTION)"
   [82e0]: #x-28METHOD-COMBINATION-20MGL-PAX-3ALOCATIVE-29 "METHOD-COMBINATION MGL-PAX:LOCATIVE"
   [830e]: http://www.lispworks.com/documentation/HyperSpec/Body/03_df.htm "\"3.4.6\" (MGL-PAX:CLHS MGL-PAX:SECTION)"
   [840e]: #x-28DREF-3AXREF-LOCATIVE-TYPE-20FUNCTION-29 "DREF:XREF-LOCATIVE-TYPE FUNCTION"
