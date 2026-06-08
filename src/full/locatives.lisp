@@ -1119,8 +1119,8 @@
   """Refers to a declaration, used in DECLARE, DECLAIM and PROCLAIM.
 
   User code may also define new declarations with CLTL2 functionality,
-  but there is currently no way to provide a docstring, and their
-  ARGLIST is always NIL.
+  but their ARGLIST is always NIL. On implementations that support it,
+  DOCSTRING returns `(DOCUMENTATION NAME 'DECLARATION)`.
 
   ```
   (cl-environments:define-declaration my-decl (&rest things)
@@ -1166,11 +1166,18 @@
   #-(or ccl sbcl)
   (declare (ignore fn name)))
 
+(defmethod docstring* ((dref declaration-dref))
+  ;; There may be warnings because DECLARATION is not a standard
+  ;; doc-type.
+  (handler-bind ((warning #'muffle-warning))
+    (documentation (dref-name dref) 'declaration)))
+
 (defmethod source-location* ((dref declaration-dref))
   #+sbcl
   (let ((name (dref-name dref)))
     (when-let* ((info (sb-int:info :declaration :known name))
-                (defsrc (sb-introspect:find-definition-source info)))
+                (defsrc (ignore-errors
+                         (sb-introspect:find-definition-source info))))
       (definition-source-to-source-location defsrc :declaration name)))
   #-sbcl
   '(:error "Don't know how to find the source location of declarations."))

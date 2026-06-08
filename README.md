@@ -1462,8 +1462,8 @@ based on the `DOC-TYPE` argument of [`CL:DOCUMENTATION`][c5ae].
     Refers to a declaration, used in [`DECLARE`][1574], [`DECLAIM`][ebea] and [`PROCLAIM`][d3e1].
     
     User code may also define new declarations with CLTL2 functionality,
-    but there is currently no way to provide a docstring, and their
-    [`ARGLIST`][e6bd] is always `NIL`.
+    but their [`ARGLIST`][e6bd] is always `NIL`. On implementations that support it,
+    [`DOCSTRING`][affc] returns `(DOCUMENTATION NAME 'DECLARATION)`.
     
     ```
     (cl-environments:define-declaration my-decl (&rest things)
