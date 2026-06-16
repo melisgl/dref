@@ -445,7 +445,11 @@
     ;; DREF::@FUNCTIONLIKE-LOCATIVES
     (foo function (defun foo))
     (|Foo| function (defun |Foo|))
-    (traced-foo function (defun traced-foo))
+    (traced-foo function (defun traced-foo)
+                (without-redefinition-warnings
+                  (defun traced-foo (x)
+                    "TRACED-FOO function"
+                    x)))
     (test-gf generic-function (defgeneric test-gf))
     (test-gf (method (number)) (defmethod test-gf))
     (my-comb method-combination (define-method-combination my-comb))

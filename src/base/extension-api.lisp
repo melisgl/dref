@@ -275,6 +275,8 @@
 
   Locative types defined with DEFINE-LOCATIVE-TYPE can be listed with
   LISP-LOCATIVE-TYPES."""
+  (assert (typep docstring '(or string null)))
+  (assert (typep dref-defclass-form 'list))
   `(%define-locative-type nil ,locative-type-and-lambda-list
                           ,locative-supertypes ,docstring ,dref-defclass-form
                           nil))

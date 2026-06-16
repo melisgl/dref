@@ -1,5 +1,15 @@
 (in-package :dref-test)
 
+(defmacro without-redefinition-warnings (&body body)
+  #+sbcl
+  `(locally
+       (declare (sb-ext:muffle-conditions sb-kernel:redefinition-warning))
+     (handler-bind ((sb-kernel:redefinition-warning #'muffle-warning))
+       ,@body))
+  #-sbcl
+  `(progn ,@body))
+
+
 (define-locative-type my-loc ()
   "This is MY-LOC.")
 
@@ -13,9 +23,10 @@
 
 (defun |Foo| ())
 
-(defun traced-foo (x)
-  "TRACED-FOO function"
-  x)
+(without-redefinition-warnings
+  (defun traced-foo (x)
+    "TRACED-FOO function"
+    x))
 (handler-bind ((warning #'muffle-warning))
   (trace traced-foo))
 (defgeneric traced-gf (x)
