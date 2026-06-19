@@ -1097,7 +1097,7 @@ based on the `DOC-TYPE` argument of [`CL:DOCUMENTATION`][c5ae].
 
 - [locative] **VARIABLE** *&OPTIONAL INITFORM*
 
-    - Direct locative subtypes: `GLOSSARY-TERM`, `SECTION`, [`CONSTANT`][c819]
+    - Direct locative subtypes: `CONCEPT`, `GLOSSARY-TERM`, `SECTION`, [`CONSTANT`][c819]
 
     Refers to a global special variable.
     `INITFORM`, or if not specified, the global value of the variable is

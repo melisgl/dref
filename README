@@ -865,7 +865,7 @@ based on the DOC-TYPE argument of CL:DOCUMENTATION.
 
 - [locative] VARIABLE &OPTIONAL INITFORM
 
-    - Direct locative subtypes: GLOSSARY-TERM, SECTION, CONSTANT
+    - Direct locative subtypes: CONCEPT, GLOSSARY-TERM, SECTION, CONSTANT
 
     Refers to a global special variable.
     INITFORM, or if not specified, the global value of the variable is
