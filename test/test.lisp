@@ -1019,7 +1019,9 @@
                                  'failure))
       (check-ref-sets (dref-apropos "setf-fn" :package 'dref-test)
                       (list (xref 'setf-fn 'setf-function)
-                            (xref 'setf-fn 'setf-compiler-macro))))))
+                            (xref 'setf-fn 'setf-compiler-macro)))))
+  (signals-not (error)
+    (dref-apropos nil :dtype 'variable)))
 
 
 (deftest test-doc ()
@@ -1033,7 +1035,7 @@
     #-sbcl
     (signals-not (error)
       (handler-bind ((pax:transcription-error #'continue))
-        (time (pax:document dref::@dref-manual :format nil))))
+        (pax:document dref::@dref-manual :format nil)))
     #+sbcl
     (check-files-the-same
      (asdf:system-relative-pathname "dref" "README")

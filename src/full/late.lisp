@@ -124,6 +124,12 @@
         (maybe-cached))))
 
 (defun definitions-with-locative-types (name locative-types)
+  #+cmucl
+  (when (eq name 'pcl::..slot-unbound..)
+    (return-from definitions-with-locative-types nil))
+  #+ecl
+  (when (eq name 'si:unbound)
+    (return-from definitions-with-locative-types nil))
   (let ((drefs ()))
     (dolist (locative-type locative-types)
       (map-definitions-of-name (lambda (dref)
