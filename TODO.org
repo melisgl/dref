@@ -68,3 +68,13 @@ Pros of Definitions:
   These can be added to DRef if needed.
 * MAYBE add DCAST and DLOOKUP locatives
 Needs a constant name such as LOCATE* or DREF*.
+* MAYBE dref-apropos: add :SOURCE-LOCATION arg?
+SOURCE-LOCATION may be anything with a source location, and DREF-
+APROPOS would keep only definitions with source location below that.
+* CANCELLED Should DREF-APROPOS be made more flexible?
+Regexp, generic filter functions, non-listing maps? Revisit if
+filtering the list is a performance problem.
+* MAYBE when exported by pax, we know the exact definition being exported
+mgl-pax-apropos-package could take advantage?
+* TODO make swank/source-path-parser::read-and-record-source-map non-interning
+* BUG (dref:dref-apropos 'close :dtype '(and function (not generic-function)))
