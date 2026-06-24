@@ -847,13 +847,16 @@
   (is (dref::exact-dtype-cover-p '(or class)))
   (is (dref::exact-dtype-cover-p '(and)))
   (is (dref::exact-dtype-cover-p '(and class)))
-  (is (dref::exact-dtype-cover-p '(not class)))
+  (is (not (dref::exact-dtype-cover-p '(not class))))
+  (is (dref::exact-dtype-cover-p '(not type)))
   (is (dref::exact-dtype-cover-p '(member)))
   (is (not (dref::exact-dtype-cover-p '(method (number)))))
   (is (not (dref::exact-dtype-cover-p '(or (method (number))))))
   (is (not (dref::exact-dtype-cover-p '(and (method (number))))))
   (is (not (dref::exact-dtype-cover-p '(not (method (number))))))
-  (is (not (dref::exact-dtype-cover-p '(satisfies foo)))))
+  (is (not (dref::exact-dtype-cover-p '(satisfies foo))))
+  (is (not (dref::exact-dtype-cover-p
+            '(and function (not generic-function))))))
 
 
 (deftest test-support-dtype-p ()

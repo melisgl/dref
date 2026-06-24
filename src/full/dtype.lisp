@@ -298,8 +298,19 @@
             collect locative-type)))
 
 (defun exact-dtype-cover-p (dtype)
-  ;; Both are in ORDER-LOCATIVE-TYPES order.
-  (equal (cover-dtype dtype) (support-dtype dtype)))
+  (let ((cover (cover-dtype dtype))
+        (not-cover (cover-dtype `(not ,dtype))))
+    ;; DEFINITIONS and DREF-APROPOS query per locative type, and
+    ;; fetching a supertype generally drags in all of its subtypes
+    ;; (there is a possible exception with @CAST-NAME-CHANGE).
+    ;; Therefore, COVER is exact iff no fetched type (C) subsumes a
+    ;; forbidden type (N) from NOT-COVER. If C subsumes N, N leaks
+    ;; into the results.
+    (dolist (c cover)
+      (dolist (n not-cover)
+        (when (locative-subtype-p n c)
+          (return-from exact-dtype-cover-p nil))))
+    t))
 
 ;;; Filter DREFS that match one of the locative types in (COVER-DTYPE
 ;;; DTYPE), such as those coming from DEFINITIONS or DREF-APROPOS, to

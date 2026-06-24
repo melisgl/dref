@@ -190,11 +190,14 @@
   "Check if LOCATIVE-TYPE-1 is in the transitive closure of
   LOCATIVE-TYPE-2 via LOCATIVE-TYPE-DIRECT-SUBS. It is an error if
   LOCATIVE-TYPE-1 or LOCATIVE-TYPE-2 is not a valid locative type."
-  (let ((class1 (or (dref-class locative-type-1)
-                    (invalid-locative-type locative-type-1)))
-        (class2 (or (dref-class locative-type-2)
-                    (invalid-locative-type locative-type-2))))
-    (subtypep class1 class2)))
+  (or
+   ;; A shortcut
+   (eq locative-type-1 locative-type-2)
+   (let ((class1 (or (dref-class locative-type-1)
+                     (invalid-locative-type locative-type-1)))
+         (class2 (or (dref-class locative-type-2)
+                     (invalid-locative-type locative-type-2))))
+     (subtypep class1 class2))))
 
 (defun extended-locative-subtype-p (locative-type-1 locative-type-2)
   (cond ((or (eq locative-type-1 locative-type-2)
