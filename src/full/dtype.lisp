@@ -225,7 +225,7 @@
               cover
               (setf (gethash dtype cache)
                     (order-locative-types (cover-dtype* dtype nil)))))
-        (order-locative-types (cover-dtype* dtype nil)))))
+        (values (order-locative-types (cover-dtype* dtype nil))))))
 
 (defun cover-dtype* (dtype negatep)
   ;; Expanding gets rid of one level of derived types (but children
