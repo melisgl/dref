@@ -138,7 +138,7 @@
     drefs))
 
 (defun/auto dref-apropos (name &key package external-only case-sensitive
-                               (dtype t) (sort t))
+                          (dtype t) (sort t))
   """Return a list of [DREF][class]s corresponding to existing
   definitions that match the various arguments. First, `(DREF-APROPOS
   NIL)` lists all definitions in the running Lisp and maybe more (e.g.
@@ -227,7 +227,9 @@
 
   Can be extended via MAP-REFERENCES-OF-TYPE and
   MAP-DEFINITIONS-OF-NAME."""
-  (let ((locative-types (cover-dtype dtype))
+  (let ((locative-types (if name
+                            (cover-dtype dtype)
+                            (minimize-cover (cover-dtype dtype))))
         (char-test (if case-sensitive #'char= #'char-equal))
         (string-test (if case-sensitive #'string= #'string-equal))
         (to-try ())
@@ -293,6 +295,19 @@
         (if sort
             (sort-references drefs)
             drefs)))))
+
+;;; Remove locative types from LOCATIVE-TYPES that need not be queried
+;;; for with their exact locative type. This optimization is currently
+;;; only valid when DREF-APROPOS's NAME argument is NIL, else we run
+;;; into issues with @CAST-NAME-CHANGE.
+(defun minimize-cover (locative-types)
+  (loop
+    for locative-type-1 in locative-types
+    unless (loop for locative-type-2 in locative-types
+                   thereis (and (not (eq locative-type-1 locative-type-2))
+                                (locative-subtype-p locative-type-1
+                                                    locative-type-2)))
+      collect locative-type-1))
 
 (defun matching-symbols (package-pred symbol-pred external-only)
   (let ((h (make-hash-table)))
