@@ -212,20 +212,43 @@
 ;;;;    DTYPE (possible if the upper bound is loose).
 
 (defvar *cover-dtype-cache* nil)
+(defvar *locative-types-with-upcasts*)
 
 (defmacro with-cover-dtype-cache (&body body)
-  `(let ((*cover-dtype-cache* (make-hash-table :test #'equal)))
+  `(let ((*cover-dtype-cache* (make-hash-table :test #'equal))
+         (*locative-types-with-upcasts* (locative-types-with-upcasts)))
      ,@body))
 
 (defun cover-dtype (dtype)
   (let ((cache *cover-dtype-cache*))
-    (if cache
-        (multiple-value-bind (cover presentp) (gethash dtype cache)
-          (if presentp
-              cover
-              (setf (gethash dtype cache)
-                    (order-locative-types (cover-dtype* dtype nil)))))
-        (values (order-locative-types (cover-dtype* dtype nil))))))
+    (when cache
+      (multiple-value-bind (value presentp) (gethash dtype cache)
+        (unless presentp
+          (let ((cover (order-locative-types (cover-dtype* dtype nil))))
+            (setq value (list (minimize-cover cover) cover))
+            (setf (gethash dtype cache) value)))
+        (values-list value)))
+    (let ((cover (order-locative-types (cover-dtype* dtype nil))))
+      (values (minimize-cover cover) cover))))
+
+;;; Remove locative types from LOCATIVE-TYPES that need not be queried
+;;; for with their exact locative type because they will be downcast
+;;; from another locative type, with the same name (i.e. no
+;;; @CAST-NAME-CHANGE).
+(defun minimize-cover (locative-types)
+  (let ((locative-types-with-upcasts
+          (if (boundp '*locative-types-with-upcasts*)
+              *locative-types-with-upcasts*
+              (locative-types-with-upcasts))))
+    (loop for locative-type in locative-types
+          when (or (member locative-type locative-types-with-upcasts)
+                   (not (strictly-covered-p locative-type locative-types)))
+            collect locative-type)))
+
+(defun strictly-covered-p (locative-type locative-types)
+  (loop for locative-type* in locative-types
+          thereis (and (not (eq locative-type locative-type*))
+                       (locative-subtype-p locative-type locative-type*))))
 
 (defun cover-dtype* (dtype negatep)
   ;; Expanding gets rid of one level of derived types (but children
@@ -291,8 +314,8 @@
 ;;; Like COVER-DTYPE, but return the list of locative types fully
 ;;; contained in DTYPE.
 (defun support-dtype (dtype)
-  (let ((cover (cover-dtype `(not ,dtype))))
-    ;; This maintains ORDER-LOCATIVE-TYPES order.
+  (let ((cover (nth-value 1 (cover-dtype `(not ,dtype)))))
+    ;; This mantains ORDER-LOCATIVE-TYPES order.
     (loop for locative-type in (locative-types)
           unless (member locative-type cover)
             collect locative-type)))

@@ -138,7 +138,7 @@
     drefs))
 
 (defun/auto dref-apropos (name &key package external-only case-sensitive
-                               (dtype t) (sort t))
+                          (dtype t) (sort t))
   """Return a list of [DREF][class]s corresponding to existing
   definitions that match the various arguments. First, `(DREF-APROPOS
   NIL)` lists all definitions in the running Lisp and maybe more (e.g.
@@ -312,7 +312,6 @@
                             (setf (gethash symbol h) t))
                           (return))))))))
     h))
-
 
 (defun sort-references (references &key key)
   "Order REFERENCES in an implementation independent way.

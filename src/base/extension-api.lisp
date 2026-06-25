@@ -667,7 +667,7 @@
       ==> #<DREF FOO-A (ACCESSOR FOO)>
       (dtypep * '(method (t foo)))
       => T
-      ;; Internally, DTYPEP upcast #<DREF FOO-A (ACCESSOR FOO)>
+      ;; Internally, DTYPEP upcasts #<DREF FOO-A (ACCESSOR FOO)>
       ;; and checks that the locative args of the resulting
       ;; definition match those in (METHOD (T FOO)).
       (locate* ** 'method)
@@ -701,6 +701,19 @@
     (assert (locate* located (dref-locative-type object)) ()
             "~@<~S was cast to ~S, which is in violation of ~S.~:@>"
             object located '@cast-name-change)))
+
+(defun locative-types-with-upcasts ()
+  ;; All locative types that @CAST-NAME-CHANGE must have an upcast.
+  (let ((locative-types ()))
+    (dolist (cast (closer-mop:generic-function-methods #'locate*))
+      (let ((specializers (method-specializers-list cast)))
+        (when (and (listp (second specializers))
+                   (eq (first (second specializers)) 'eql))
+          (let ((locative-type (second (second specializers)))
+                (cast-to-dref-class-name (first specializers)))
+            (when (subtypep (dref-class locative-type) cast-to-dref-class-name)
+              (pushnew locative-type locative-types))))))
+    locative-types))
 
 
 ;;;; Public macros to define LOCATE* methods
