@@ -124,24 +124,24 @@
   (and (= (length args) 1)
        (symbolp (first args))))
 
-;;; A wrapper around ASDF:FIND-SYSTEM to make it play nicer with
-;;; package-inferred systems and warn on unexpected errors.
-(defun find-system* (name &key (errorp t) (warnp t))
-  ;; To have a better chance of READing DEFPACKAGE forms in
-  ;; package-inferred systems. Also, see @SOURCE-FILE-READ-EVAL.
-  (let ((*read-eval* t)
-        (*package* #.(find-package :cl-user))
-        (*readtable* (named-readtables:find-readtable :standard)))
-    (handler-bind
-        ((error
-           (lambda (e)
-             (when (and warnp
-                        (not (typep e 'asdf:missing-component)))
-               (warn "~@<Loading ASDF system definition ~S failed with: ~A~:@>"
-                     name e))
-             (when (not errorp)
-               (return-from find-system* nil)))))
-      (asdf:find-system name t))))
+(defun registered-system (name &key (errorp t))
+  (let ((registered-system (find-symbol "REGISTERED-SYSTEM" "ASDF")))
+    (if registered-system
+        (funcall registered-system name)
+        (when (member name (asdf:registered-systems) :test #'string=)
+          ;; To have a better chance of READing DEFPACKAGE forms in
+          ;; package-inferred systems. Also, see @SOURCE-FILE-READ-EVAL.
+          (let ((*read-eval* t)
+                (*package* #.(find-package :cl-user))
+                (*readtable* (named-readtables:find-readtable :standard)))
+            (handler-bind
+                ((error (lambda (e)
+                          (unless (typep e 'asdf:missing-component)
+                            (warn "~@<Loading ASDF system definition ~S ~
+                             failed with: ~A~:@>" name e))
+                          (unless errorp
+                            (return-from registered-system nil)))))
+              (asdf:find-system name t)))))))
 
 
 (define-condition condition-context-mixin ()

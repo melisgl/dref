@@ -1267,12 +1267,7 @@
 
 (define-lookup asdf:system (name locative-args)
   (let ((name (ignore-errors (string-downcase (string name)))))
-    (unless (progn
-              #+(or allegro clisp ecl)
-              (when (member name (asdf:registered-systems) :test #'string=)
-                (find-system* name))
-              #-(or allegro clisp ecl)
-              (asdf:registered-system name))
+    (unless (registered-system name)
       (locate-error "~S does not name an ASDF:SYSTEM." name))
     (%make-dref (character-string name) asdf:system)))
 
@@ -1282,7 +1277,7 @@
 
 (defmethod resolve* ((dref asdf-system-dref))
   (handler-bind ((warning #'muffle-warning))
-    (or (find-system* (dref-name dref) :errorp nil)
+    (or (registered-system (dref-name dref) :errorp nil)
         (resolve-error))))
 
 (defmethod source-location* ((dref asdf-system-dref))

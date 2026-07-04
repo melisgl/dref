@@ -541,7 +541,7 @@
                     (asdf:find-system "dref-test-package-inferred/x"))))
             (signals-not (error)
               (with-asdf ()
-                (dref::find-system* "dref-test-package-inferred/x")))
+                (dref::registered-system "dref-test-package-inferred/x")))
             (signals-not (error)
               (with-asdf ()
                 (dref "dref-test-package-inferred/x" 'asdf:system)))))))
