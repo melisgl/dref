@@ -219,6 +219,19 @@
          (*locative-types-with-upcasts* (locative-types-with-upcasts)))
      ,@body))
 
+(defun locative-types-with-upcasts ()
+  ;; All locative types that @CAST-NAME-CHANGE must have an upcast.
+  (let ((locative-types ()))
+    (dolist (cast (closer-mop:generic-function-methods #'locate*))
+      (let ((specializers (method-specializers-list cast)))
+        (when (and (listp (second specializers))
+                   (eq (first (second specializers)) 'eql))
+          (let ((locative-type (second (second specializers)))
+                (cast-to-dref-class-name (first specializers)))
+            (when (subtypep (dref-class locative-type) cast-to-dref-class-name)
+              (pushnew locative-type locative-types))))))
+    locative-types))
+
 (defun cover-dtype (dtype)
   (let ((cache *cover-dtype-cache*))
     (when cache
