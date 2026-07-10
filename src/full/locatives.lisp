@@ -959,10 +959,10 @@
 
 (defmethod map-definitions-of-name
     (fn name (locative-type (eql 'structure-accessor)))
-  (when-let (f (ignore-errors (fdefinition* name)))
-    (when-let (dref (locate f nil))
-      (when (typep dref 'structure-accessor-dref)
-        (funcall fn dref)))))
+  (multiple-value-bind (structure-name certainp)
+      (structure-name-of-accessor name)
+    (when (and structure-name certainp)
+      (funcall fn (dref name 'structure-accessor)))))
 
 (defmethod resolve* ((dref structure-accessor-dref))
   #+(or ccl sbcl)
