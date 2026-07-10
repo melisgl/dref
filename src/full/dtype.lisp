@@ -219,6 +219,7 @@
          (*locative-types-with-upcasts* (locative-types-with-upcasts)))
      ,@body))
 
+(declaim (ftype function method-specializers-list))
 (defun locative-types-with-upcasts ()
   ;; All locative types that @CAST-NAME-CHANGE must have an upcast.
   (let ((locative-types ()))
